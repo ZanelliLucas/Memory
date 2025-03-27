@@ -2,68 +2,434 @@
 <Window x:Class="MemoryMatchGame.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Memory Match Game" Height="600" Width="600"
-        Background="#2D1B69">
+        xmlns:local="clr-namespace:MemoryMatchGame"
+        Title="Memory Match Game" Height="720" Width="640"
+        WindowStartupLocation="CenterScreen"
+        Style="{StaticResource CustomWindowStyle}"
+        Background="#1A103C"
+        MouseLeftButtonDown="Window_MouseLeftButtonDown">
+    
+    <Window.Resources>
+        <!-- Style pour les cartes -->
+        <Style x:Key="CardStyle" TargetType="Button">
+            <Setter Property="Width" Value="130"/>
+            <Setter Property="Height" Value="130"/>
+            <Setter Property="Margin" Value="8"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="FontSize" Value="50"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid>
+                            <Border x:Name="CardBorder" 
+                                    CornerRadius="12" 
+                                    Background="#2B2464"
+                                    BorderThickness="2"
+                                    BorderBrush="#3D3780">
+                                <Border.Effect>
+                                    <DropShadowEffect ShadowDepth="4" Direction="315" 
+                                                    Color="#000000" Opacity="0.5" 
+                                                    BlurRadius="10"/>
+                                </Border.Effect>
+                            </Border>
+                            <Border CornerRadius="12" Background="Transparent">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="CardBorder" Property="Background" Value="#332D78"/>
+                                <Setter TargetName="CardBorder" Property="RenderTransform">
+                                    <Setter.Value>
+                                        <TranslateTransform Y="-3"/>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="CardBorder" Property="Background" Value="#282361"/>
+                                <Setter TargetName="CardBorder" Property="RenderTransform">
+                                    <Setter.Value>
+                                        <TranslateTransform Y="0"/>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        
+        <!-- Style pour le bouton New Game -->
+        <Style x:Key="NewGameButtonStyle" TargetType="Button">
+            <Setter Property="Width" Value="200"/>
+            <Setter Property="Height" Value="50"/>
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid>
+                            <Border x:Name="ButtonBorder" 
+                                    CornerRadius="25" 
+                                    Background="{TemplateBinding Background}">
+                                <Border.Effect>
+                                    <DropShadowEffect ShadowDepth="3" Direction="315" 
+                                                    Color="#15084D" Opacity="0.7" 
+                                                    BlurRadius="10"/>
+                                </Border.Effect>
+                            </Border>
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="ButtonBorder" Property="RenderTransform">
+                                    <Setter.Value>
+                                        <TranslateTransform Y="-2"/>
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter TargetName="ButtonBorder" Property="Effect">
+                                    <Setter.Value>
+                                        <DropShadowEffect ShadowDepth="5" Direction="315" 
+                                                        Color="#15084D" Opacity="0.8" 
+                                                        BlurRadius="15"/>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="ButtonBorder" Property="RenderTransform">
+                                    <Setter.Value>
+                                        <TranslateTransform Y="1"/>
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter TargetName="ButtonBorder" Property="Effect">
+                                    <Setter.Value>
+                                        <DropShadowEffect ShadowDepth="1" Direction="315" 
+                                                        Color="#15084D" Opacity="0.5" 
+                                                        BlurRadius="5"/>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+    
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
+        <Grid.Background>
+            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                <GradientStop Color="#1A103C" Offset="0"/>
+                <GradientStop Color="#2D1B69" Offset="1"/>
+            </LinearGradientBrush>
+        </Grid.Background>
         
-        <!-- Titre -->
-        <TextBlock Grid.Row="0" 
-                   Text="Memory Match Game" 
-                   FontSize="32" 
-                   Foreground="#E5B8E8" 
-                   HorizontalAlignment="Center" 
-                   Margin="0,20,0,10"/>
+        <!-- Fond avec motif subtil -->
+        <Grid>
+            <Grid.Background>
+                <DrawingBrush TileMode="Tile" Viewport="0,0,100,100" ViewportUnits="Absolute">
+                    <DrawingBrush.Drawing>
+                        <DrawingGroup>
+                            <GeometryDrawing Brush="#30352B7B">
+                                <GeometryDrawing.Geometry>
+                                    <EllipseGeometry Center="50,50" RadiusX="2" RadiusY="2"/>
+                                </GeometryDrawing.Geometry>
+                            </GeometryDrawing>
+                        </DrawingGroup>
+                    </DrawingBrush.Drawing>
+                </DrawingBrush>
+            </Grid.Background>
+        </Grid>
         
-        <!-- Informations du jeu -->
-        <StackPanel Grid.Row="1" 
-                    Orientation="Horizontal" 
-                    HorizontalAlignment="Center" 
-                    Margin="0,0,0,20">
-            <TextBlock Text="Matches found: " 
-                       Foreground="White" 
-                       FontSize="18"/>
-            <TextBlock x:Name="MatchesText" 
-                       Text="0 of 6" 
-                       Foreground="White" 
-                       FontSize="18"/>
-        </StackPanel>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            
+            <!-- Titre avec effet -->
+            <Grid Grid.Row="0" Margin="0,30,0,10">
+                <TextBlock Text="Memory Match Game" 
+                           FontSize="42" 
+                           FontWeight="Bold"
+                           Foreground="#2D1B69" 
+                           HorizontalAlignment="Center"
+                           RenderTransformOrigin="0.5,0.5">
+                    <TextBlock.RenderTransform>
+                        <TranslateTransform X="2" Y="2"/>
+                    </TextBlock.RenderTransform>
+                </TextBlock>
+                <TextBlock x:Name="TitleTextBlock"
+                           Text="Memory Match Game" 
+                           FontSize="42" 
+                           FontWeight="Bold"
+                           Foreground="#E5B8E8" 
+                           HorizontalAlignment="Center"
+                           RenderTransformOrigin="0.5,0.5"/>
+            </Grid>
+            
+            <!-- Informations du jeu -->
+            <Border Grid.Row="1" 
+                    Background="#30352B7B" 
+                    CornerRadius="20" 
+                    Padding="20,10" 
+                    Margin="0,0,0,20" 
+                    HorizontalAlignment="Center">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Matches found: " 
+                               Foreground="White" 
+                               FontSize="22"/>
+                    <TextBlock x:Name="MatchesText" 
+                               Text="0 of 6" 
+                               Foreground="#E5B8E8" 
+                               FontWeight="SemiBold"
+                               FontSize="22"/>
+                </StackPanel>
+                <Border.Effect>
+                    <DropShadowEffect ShadowDepth="2" Direction="315" 
+                                      Color="#000000" Opacity="0.3" 
+                                      BlurRadius="8"/>
+                </Border.Effect>
+            </Border>
+            
+            <!-- Plateau de jeu avec effet 3D -->
+            <Border x:Name="GameBoardContainer"
+                    Grid.Row="2" 
+                    Background="#25164B" 
+                    CornerRadius="16" 
+                    Margin="20,0" 
+                    Padding="10">
+                <Border.Effect>
+                    <DropShadowEffect ShadowDepth="8" Direction="315" 
+                                    Color="#000000" Opacity="0.5" 
+                                    BlurRadius="15"/>
+                </Border.Effect>
+                
+                <UniformGrid x:Name="GameBoard" 
+                             Rows="3" Columns="4" 
+                             HorizontalAlignment="Center" 
+                             VerticalAlignment="Center">
+                    <!-- Les cartes seront ajoutées dynamiquement -->
+                </UniformGrid>
+            </Border>
+            
+            <!-- Bouton Nouveau Jeu -->
+            <Button Grid.Row="3" 
+                    x:Name="NewGameButton" 
+                    Content="Start New Game" 
+                    Margin="0,30,0,40" 
+                    HorizontalAlignment="Center"
+                    Style="{StaticResource NewGameButtonStyle}">
+                <Button.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#8B81D2" Offset="0"/>
+                        <GradientStop Color="#5B4DBC" Offset="1"/>
+                    </LinearGradientBrush>
+                </Button.Background>
+            </Button>
+        </Grid>
+    </Grid>
+</Window>">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="CardBorder" Property="Background" Value="#332D78"/>
+                                <Setter TargetName="CardBorder" Property="RenderTransform">
+                                    <Setter.Value>
+                                        <TranslateTransform Y="-3"/>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="CardBorder" Property="Background" Value="#282361"/>
+                                <Setter TargetName="CardBorder" Property="RenderTransform">
+                                    <Setter.Value>
+                                        <TranslateTransform Y="0"/>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
         
-        <!-- Plateau de jeu -->
-        <UniformGrid Grid.Row="2" 
-                     x:Name="GameBoard" 
-                     Rows="3" Columns="4" 
-                     HorizontalAlignment="Center" 
-                     VerticalAlignment="Center" 
-                     Margin="20">
-            <!-- Les cartes seront ajoutées dynamiquement -->
-        </UniformGrid>
+        <!-- Style pour le bouton New Game -->
+        <Style x:Key="NewGameButtonStyle" TargetType="Button">
+            <Setter Property="Width" Value="200"/>
+            <Setter Property="Height" Value="50"/>
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid>
+                            <Border x:Name="ButtonBorder" 
+                                    CornerRadius="25" 
+                                    Background="{TemplateBinding Background}">
+                                <Border.Effect>
+                                    <DropShadowEffect ShadowDepth="3" Direction="315" 
+                                                    Color="#15084D" Opacity="0.7" 
+                                                    BlurRadius="10"/>
+                                </Border.Effect>
+                            </Border>
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="ButtonBorder" Property="RenderTransform">
+                                    <Setter.Value>
+                                        <TranslateTransform Y="-2"/>
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter TargetName="ButtonBorder" Property="Effect">
+                                    <Setter.Value>
+                                        <DropShadowEffect ShadowDepth="5" Direction="315" 
+                                                        Color="#15084D" Opacity="0.8" 
+                                                        BlurRadius="15"/>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="ButtonBorder" Property="RenderTransform">
+                                    <Setter.Value>
+                                        <TranslateTransform Y="1"/>
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter TargetName="ButtonBorder" Property="Effect">
+                                    <Setter.Value>
+                                        <DropShadowEffect ShadowDepth="1" Direction="315" 
+                                                        Color="#15084D" Opacity="0.5" 
+                                                        BlurRadius="5"/>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+    
+    <Grid>
+        <Grid.Background>
+            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                <GradientStop Color="#1A103C" Offset="0"/>
+                <GradientStop Color="#2D1B69" Offset="1"/>
+            </LinearGradientBrush>
+        </Grid.Background>
         
-        <!-- Bouton Nouveau Jeu -->
-        <Button Grid.Row="3" 
-                x:Name="NewGameButton" 
-                Content="Start New Game" 
-                Width="150" 
-                Height="40" 
-                Margin="0,20,0,30" 
-                Background="#352B7B" 
-                Foreground="White" 
-                FontSize="16" 
-                HorizontalAlignment="Center" 
-                BorderThickness="0">
-            <Button.Resources>
-                <Style TargetType="Border">
-                    <Setter Property="CornerRadius" Value="8"/>
-                </Style>
-            </Button.Resources>
-            <Button.Effect>
-                <DropShadowEffect Color="Black" Direction="320" ShadowDepth="4" Opacity="0.5" BlurRadius="8"/>
-            </Button.Effect>
-        </Button>
+        <!-- Fond avec motif subtil -->
+        <Grid>
+            <Grid.Background>
+                <DrawingBrush TileMode="Tile" Viewport="0,0,100,100" ViewportUnits="Absolute">
+                    <DrawingBrush.Drawing>
+                        <DrawingGroup>
+                            <GeometryDrawing Brush="#30352B7B">
+                                <GeometryDrawing.Geometry>
+                                    <EllipseGeometry Center="50,50" RadiusX="2" RadiusY="2"/>
+                                </GeometryDrawing.Geometry>
+                            </GeometryDrawing>
+                        </DrawingGroup>
+                    </DrawingBrush.Drawing>
+                </DrawingBrush>
+            </Grid.Background>
+        </Grid>
+        
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            
+            <!-- Titre avec effet -->
+            <Grid Grid.Row="0" Margin="0,30,0,10">
+                <TextBlock Text="Memory Match Game" 
+                           FontSize="42" 
+                           FontWeight="Bold"
+                           Foreground="#2D1B69" 
+                           HorizontalAlignment="Center"
+                           RenderTransformOrigin="0.5,0.5">
+                    <TextBlock.RenderTransform>
+                        <TranslateTransform X="2" Y="2"/>
+                    </TextBlock.RenderTransform>
+                </TextBlock>
+                <TextBlock Text="Memory Match Game" 
+                           FontSize="42" 
+                           FontWeight="Bold"
+                           Foreground="#E5B8E8" 
+                           HorizontalAlignment="Center"/>
+            </Grid>
+            
+            <!-- Informations du jeu -->
+            <Border Grid.Row="1" 
+                    Background="#30352B7B" 
+                    CornerRadius="20" 
+                    Padding="20,10" 
+                    Margin="0,0,0,20" 
+                    HorizontalAlignment="Center">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Matches found: " 
+                               Foreground="White" 
+                               FontSize="22"/>
+                    <TextBlock x:Name="MatchesText" 
+                               Text="0 of 6" 
+                               Foreground="#E5B8E8" 
+                               FontWeight="SemiBold"
+                               FontSize="22"/>
+                </StackPanel>
+                <Border.Effect>
+                    <DropShadowEffect ShadowDepth="2" Direction="315" 
+                                      Color="#000000" Opacity="0.3" 
+                                      BlurRadius="8"/>
+                </Border.Effect>
+            </Border>
+            
+            <!-- Plateau de jeu avec effet 3D -->
+            <Border Grid.Row="2" 
+                    Background="#25164B" 
+                    CornerRadius="16" 
+                    Margin="20,0" 
+                    Padding="10">
+                <Border.Effect>
+                    <DropShadowEffect ShadowDepth="8" Direction="315" 
+                                    Color="#000000" Opacity="0.5" 
+                                    BlurRadius="15"/>
+                </Border.Effect>
+                
+                <UniformGrid x:Name="GameBoard" 
+                             Rows="3" Columns="4" 
+                             HorizontalAlignment="Center" 
+                             VerticalAlignment="Center">
+                    <!-- Les cartes seront ajoutées dynamiquement -->
+                </UniformGrid>
+            </Border>
+            
+            <!-- Bouton Nouveau Jeu -->
+            <Button Grid.Row="3" 
+                    x:Name="NewGameButton" 
+                    Content="Start New Game" 
+                    Margin="0,30,0,40" 
+                    HorizontalAlignment="Center"
+                    Style="{StaticResource NewGameButtonStyle}">
+                <Button.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#8B81D2" Offset="0"/>
+                        <GradientStop Color="#5B4DBC" Offset="1"/>
+                    </LinearGradientBrush>
+                </Button.Background>
+            </Button>
+        </Grid>
     </Grid>
 </Window>
