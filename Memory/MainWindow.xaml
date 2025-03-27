@@ -1,0 +1,69 @@
+﻿<!-- MainWindow.xaml -->
+<Window x:Class="MemoryMatchGame.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Memory Match Game" Height="600" Width="600"
+        Background="#2D1B69">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        <!-- Titre -->
+        <TextBlock Grid.Row="0" 
+                   Text="Memory Match Game" 
+                   FontSize="32" 
+                   Foreground="#E5B8E8" 
+                   HorizontalAlignment="Center" 
+                   Margin="0,20,0,10"/>
+        
+        <!-- Informations du jeu -->
+        <StackPanel Grid.Row="1" 
+                    Orientation="Horizontal" 
+                    HorizontalAlignment="Center" 
+                    Margin="0,0,0,20">
+            <TextBlock Text="Matches found: " 
+                       Foreground="White" 
+                       FontSize="18"/>
+            <TextBlock x:Name="MatchesText" 
+                       Text="0 of 6" 
+                       Foreground="White" 
+                       FontSize="18"/>
+        </StackPanel>
+        
+        <!-- Plateau de jeu -->
+        <UniformGrid Grid.Row="2" 
+                     x:Name="GameBoard" 
+                     Rows="3" Columns="4" 
+                     HorizontalAlignment="Center" 
+                     VerticalAlignment="Center" 
+                     Margin="20">
+            <!-- Les cartes seront ajoutées dynamiquement -->
+        </UniformGrid>
+        
+        <!-- Bouton Nouveau Jeu -->
+        <Button Grid.Row="3" 
+                x:Name="NewGameButton" 
+                Content="Start New Game" 
+                Width="150" 
+                Height="40" 
+                Margin="0,20,0,30" 
+                Background="#352B7B" 
+                Foreground="White" 
+                FontSize="16" 
+                HorizontalAlignment="Center" 
+                BorderThickness="0">
+            <Button.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="8"/>
+                </Style>
+            </Button.Resources>
+            <Button.Effect>
+                <DropShadowEffect Color="Black" Direction="320" ShadowDepth="4" Opacity="0.5" BlurRadius="8"/>
+            </Button.Effect>
+        </Button>
+    </Grid>
+</Window>
